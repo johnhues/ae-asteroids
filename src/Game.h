@@ -2,11 +2,19 @@
 #define ASTEROIDS_GAME_H
 
 #include "ae/aether.h"
-#include "entt/entt.hpp"
+#include "Level.h"
 #include "Resources.h"
 
 const ae::Tag TAG_GAME = "game";
 const ae::Tag TAG_RESOURCE = "resource";
+ae::DebugLines*& GetDebugLines();
+
+enum class TeamId
+{
+	None,
+	Player,
+	Enemy
+};
 
 class Game
 {
@@ -24,17 +32,22 @@ public:
 	// Systems
 	ae::Window window;
 	ae::GraphicsDevice render;
+	ae::DebugLines debugLines;
 	ae::Input input;
 	ae::FileSystem file;
 	ae::TimeStep timeStep;
 	entt::registry registry;
 	
 	// Game state
+	entt::entity level = entt::entity();
 	entt::entity localShip = entt::entity();
 	ae::Matrix4 worldToNdc = ae::Matrix4::Identity();
+	ae::Color ambientLight = ae::Color::White();
 	
 	// Resources
 	ae::Shader shader;
+	MeshResource level0;
+	MeshResource cubeModel;
 	MeshResource shipModel;
 	MeshResource asteroidModel;
 	

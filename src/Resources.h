@@ -39,10 +39,8 @@ class MeshResource
 public:
 	void Initialize( const Vertex* vertices, const uint16_t* indices, uint32_t vertexCount, uint32_t indexCount );
 	void Initialize( ae::FileSystem* file, const char* filePath );
-	void Draw( const ae::Shader* shader, const ae::Matrix4& normalMatrix, const ae::Matrix4& localToNdc ) const;
 	
-private:
-	ae::VertexData m_vertexData;
+	ae::VertexData vertexData;
 };
 
 #endif

@@ -3,6 +3,19 @@
 #include "ofbx.h"
 
 //------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+ae::Matrix4 ofbxToAe( const ofbx::Matrix& m )
+{
+	ae::Matrix4 result;
+	for ( uint32_t i = 0; i < 16; i++ )
+	{
+		result.d[ i ] = m.m[ i ];
+	}
+	return result;
+}
+
+//------------------------------------------------------------------------------
 // Shaders
 //------------------------------------------------------------------------------
 const char* kVertShader = "\
@@ -21,14 +34,16 @@ const char* kVertShader = "\
 	}";
 
 const char* kFragShader = "\
+	AE_UNIFORM vec3 u_ambientLight;\
+	AE_UNIFORM vec3 u_color;\
 	AE_IN_HIGHP vec4 v_color;\
 	AE_IN_HIGHP vec4 v_normal;\
 	void main()\
 	{\
 		float d = max(0.0, dot(v_normal.rgb, normalize(vec3(1,1,1))));\
-		vec3 light = vec3(d);\
+		vec3 light = vec3(d) + u_ambientLight;\
 		vec3 n = normalize(v_normal.rgb);\
-		AE_COLOR = vec4(v_color.rgb * light, 1.0);\
+		AE_COLOR = vec4(u_color * v_color.rgb * light, 1.0);\
 	}";
 
 //------------------------------------------------------------------------------
@@ -66,12 +81,12 @@ const uint16_t kAsteroidIndices[] =
 //------------------------------------------------------------------------------
 void MeshResource::Initialize( const Vertex* vertices, const uint16_t* indices, uint32_t vertexCount, uint32_t indexCount )
 {
-	m_vertexData.Initialize( sizeof(*vertices), sizeof(*indices), vertexCount, indexCount, ae::VertexData::Primitive::Triangle, ae::VertexData::Usage::Static, ae::VertexData::Usage::Static );
-	m_vertexData.AddAttribute( "a_position", 4, ae::VertexData::Type::Float, offsetof( Vertex, pos ) );
-	m_vertexData.AddAttribute( "a_normal", 4, ae::VertexData::Type::Float, offsetof( Vertex, normal ) );
-	m_vertexData.AddAttribute( "a_color", 4, ae::VertexData::Type::Float, offsetof( Vertex, color ) );
-	m_vertexData.SetVertices( vertices, vertexCount );
-	m_vertexData.SetIndices( indices, indexCount );
+	vertexData.Initialize( sizeof(*vertices), sizeof(*indices), vertexCount, indexCount, ae::VertexData::Primitive::Triangle, ae::VertexData::Usage::Static, ae::VertexData::Usage::Static );
+	vertexData.AddAttribute( "a_position", 4, ae::VertexData::Type::Float, offsetof( Vertex, pos ) );
+	vertexData.AddAttribute( "a_normal", 4, ae::VertexData::Type::Float, offsetof( Vertex, normal ) );
+	vertexData.AddAttribute( "a_color", 4, ae::VertexData::Type::Float, offsetof( Vertex, color ) );
+	vertexData.SetVertices( vertices, vertexCount );
+	vertexData.SetIndices( indices, indexCount );
 }
 
 void MeshResource::Initialize( ae::FileSystem* file, const char* filePath )
@@ -101,6 +116,8 @@ void MeshResource::Initialize( ae::FileSystem* file, const char* filePath )
 		{
 			const ofbx::Mesh* mesh = scene->getMesh( i );
 			const ofbx::Geometry* geo = mesh->getGeometry();
+			ae::Matrix4 localToWorld = ofbxToAe( mesh->getGlobalTransform() );
+			ae::Matrix4 normalMatrix = localToWorld.GetNormalMatrix();
 			
 			uint32_t vertexCount = geo->getVertexCount();
 			const ofbx::Vec3* meshVerts = geo->getVertices();
@@ -113,6 +130,7 @@ void MeshResource::Initialize( ae::FileSystem* file, const char* filePath )
 				v.pos.y = p.y;
 				v.pos.z = p.z;
 				v.pos.w = 1.0f;
+				v.pos = localToWorld * v.pos;
 				v.normal = ae::Vec4( 0.0f );
 				v.color = ae::Color::Gray().GetLinearRGBA();
 				vertices.Append( v );
@@ -133,6 +151,8 @@ void MeshResource::Initialize( ae::FileSystem* file, const char* filePath )
 				v.normal.y = n.y;
 				v.normal.z = n.z;
 				v.normal.w = 0.0f;
+				v.normal = normalMatrix * v.normal;
+				v.normal.SafeNormalize();
 			}
 			
 			indexOffset += vertexCount;
@@ -140,12 +160,4 @@ void MeshResource::Initialize( ae::FileSystem* file, const char* filePath )
 		Initialize( vertices.Begin(), indices.Begin(), vertices.Length(), indices.Length() );
 	}
 	ae::Free( fileData );
-}
-
-void MeshResource::Draw( const ae::Shader* shader, const ae::Matrix4& normalMatrix, const ae::Matrix4& localToNdc ) const
-{
-	ae::UniformList uniformList;
-	uniformList.Set( "u_modelToNdc", localToNdc );
-	uniformList.Set( "u_normalMatrix", normalMatrix );
-	m_vertexData.Render( shader, uniformList );
 }

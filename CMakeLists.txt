@@ -32,12 +32,12 @@ list(APPEND ASTEROID_SOURCES ${AE_SOURCE_DIR}/include/ae/aether.h) # This line i
 FetchContent_Declare(
 	entt
 	GIT_REPOSITORY https://github.com/skypjack/entt.git
-	GIT_TAG 0b3e3fd19adbb8b56b92908493559a7eda7ce644
+	GIT_TAG 9460e04ea547e7f4f3923c5458b187781c604220
 )
 FetchContent_Populate(entt)
 FetchContent_GetProperties(entt SOURCE_DIR ENTT_SOURCE_DIR)
-list(APPEND ASTEROID_INC_DIRS ${ENTT_SOURCE_DIR}/single_include)
-list(APPEND ASTEROID_SOURCES ${ENTT_SOURCE_DIR}/single_include/entt/entt.hpp)
+list(APPEND ASTEROID_INC_DIRS ${ENTT_SOURCE_DIR}/src)
+list(APPEND ASTEROID_SOURCES ${ENTT_SOURCE_DIR}/src/entt/entt.hpp)
 
 # openfbx
 FetchContent_Declare(
