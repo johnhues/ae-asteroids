@@ -14,7 +14,14 @@ void Game::Initialize()
 	render.Initialize( &window );
 	debugLines.Initialize( 256 );
 	input.Initialize( &window );
-	file.Initialize( "data", "johnhues", "AE-Asteroids" );
+#if _AE_WINDOWS_
+	const char* dataDir = "../data";
+#elif _AE_APPLE_
+	const char* dataDir = "data";
+#else
+	const char* dataDir = "";
+#endif
+	file.Initialize( dataDir, "johnhues", "AE-Asteroids" );
 	timeStep.SetTimeStep( 1.0f / 60.0f );
 	GetDebugLines() = &debugLines;
 	

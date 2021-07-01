@@ -91,10 +91,26 @@ void MeshResource::Initialize( const Vertex* vertices, const uint16_t* indices, 
 
 void MeshResource::Initialize( ae::FileSystem* file, const char* filePath )
 {
+	auto errFn = [&]()
+	{
+		ae::Str256 rootPath;
+		file->GetRootDir( ae::FileSystem::Root::Data, &rootPath );
+		ae::FileSystem::AppendToPath( &rootPath, filePath );
+		AE_ERR( "Could not load mesh '#'", rootPath );
+	};
 	uint32_t fileSize = file->GetSize( ae::FileSystem::Root::Data, filePath );
-	uint8_t* fileData = (uint8_t*)ae::Allocate( TAG_RESOURCE, fileSize, 1 );
-	file->Read( ae::FileSystem::Root::Data, filePath, fileData, fileSize );
-	ofbx::IScene* scene = ofbx::load( (ofbx::u8*)fileData, fileSize, (ofbx::u64)ofbx::LoadFlags::TRIANGULATE );
+	if ( !fileSize )
+	{
+		errFn();
+		return;
+	}
+	ae::Scratch< uint8_t > fileData( TAG_RESOURCE, fileSize );
+	if ( fileSize != file->Read( ae::FileSystem::Root::Data, filePath, fileData.Data(), fileSize ) )
+	{
+		errFn();
+		return;
+	}
+	ofbx::IScene* scene = ofbx::load( (ofbx::u8*)fileData.Data(), fileSize, (ofbx::u64)ofbx::LoadFlags::TRIANGULATE );
 	if ( scene )
 	{
 		uint32_t meshCount = scene->getMeshCount();
@@ -159,5 +175,4 @@ void MeshResource::Initialize( ae::FileSystem* file, const char* filePath )
 		}
 		Initialize( vertices.Begin(), indices.Begin(), vertices.Length(), indices.Length() );
 	}
-	ae::Free( fileData );
 }
