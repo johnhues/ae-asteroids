@@ -202,11 +202,12 @@ void Projectile::Update( Game* game, entt::entity entity )
 	{
 		game->Kill( entity );
 	}
-}
-
-void Projectile::OnHit( entt::entity entity )
-{
-	AE_INFO( "projectile hit" );
+	
+	Physics& physics = game->registry.get< Physics >( entity );
+	if ( physics.hit )
+	{
+		game->Kill( entity );
+	}
 }
 
 void Model::Draw( Game* game, const Transform& transform ) const

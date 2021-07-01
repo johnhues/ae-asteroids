@@ -175,7 +175,7 @@ void Game::Run()
 			{
 				if ( physics.collisionRadius )
 				{
-					level.Test( &transform, &physics );
+					physics.hit = level.Test( &transform, &physics );
 				}
 			}
 		}

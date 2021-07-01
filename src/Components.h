@@ -31,6 +31,7 @@ struct Physics : public Component
 	float rotationVel = 0.0f;
 	
 	float collisionRadius = 0.0f;
+	bool hit = false;
 };
 
 struct Ship : public Component
@@ -78,7 +79,6 @@ struct Turret : public Component
 struct Projectile : public Component
 {
 	void Update( class Game* game, entt::entity entity );
-	void OnHit( entt::entity entity ) override;
 	
 	double killTime = 0.0;
 };

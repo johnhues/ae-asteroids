@@ -6,7 +6,6 @@
 struct Component
 {
 	virtual ~Component() {}
-	virtual void OnHit( entt::entity entity ) {}
 	entt::registry* registry;
 };
 
