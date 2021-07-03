@@ -21,7 +21,7 @@ endif()
 FetchContent_Declare(
 	aether-game-utils
 	GIT_REPOSITORY https://github.com/johnhues/aether-game-utils.git
-	GIT_TAG b3efda7457c84f753ecbe44fba47452f9ad61299
+	GIT_TAG e4f65d3616137dcae2130bdd6f52d9e98c450cca
 )
 FetchContent_Populate(aether-game-utils) # Download but don't build
 FetchContent_GetProperties(aether-game-utils SOURCE_DIR AE_SOURCE_DIR) # Store download path in AE_SOURCE_DIR
@@ -34,7 +34,7 @@ FetchContent_Declare(
 	GIT_REPOSITORY https://github.com/skypjack/entt.git
 	GIT_TAG 9460e04ea547e7f4f3923c5458b187781c604220
 )
-FetchContent_Populate(entt)
+FetchContent_Populate(entt) # Download but don't build
 FetchContent_GetProperties(entt SOURCE_DIR ENTT_SOURCE_DIR)
 list(APPEND ASTEROID_INC_DIRS ${ENTT_SOURCE_DIR}/src)
 list(APPEND ASTEROID_SOURCES ${ENTT_SOURCE_DIR}/src/entt/entt.hpp)
@@ -45,7 +45,7 @@ FetchContent_Declare(
 	GIT_REPOSITORY https://github.com/nem0/OpenFBX.git
 	GIT_TAG 5ce5c3490a90d346366abcda48e1d77526d09a15
 )
-FetchContent_Populate(openfbx)
+FetchContent_Populate(openfbx) # Download but don't build
 FetchContent_GetProperties(openfbx SOURCE_DIR OPENFBX_SOURCE_DIR)
 file(GLOB OPENFBX_SOURCES CONFIGURE_DEPENDS "${OPENFBX_SOURCE_DIR}/src/*")
 add_library(openfbx ${OPENFBX_SOURCES})
