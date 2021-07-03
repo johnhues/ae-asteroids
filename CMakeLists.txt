@@ -21,7 +21,7 @@ endif()
 FetchContent_Declare(
 	aether-game-utils
 	GIT_REPOSITORY https://github.com/johnhues/aether-game-utils.git
-	GIT_TAG 4c2f3769a4f34bd724aa3435da46033e0b59bb1a
+	GIT_TAG b3efda7457c84f753ecbe44fba47452f9ad61299
 )
 FetchContent_Populate(aether-game-utils) # Download but don't build
 FetchContent_GetProperties(aether-game-utils SOURCE_DIR AE_SOURCE_DIR) # Store download path in AE_SOURCE_DIR
