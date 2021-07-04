@@ -53,7 +53,7 @@ void Game::Load()
 		Level& level = registry.emplace< Level >( entity );
 		level.Clear();
 		level.AddMesh( &level0, ae::Matrix4::Identity() );
-		level.AddMesh( &cubeModel, ae::Matrix4::Scaling( ae::Vec3( 3.0f ) ) * ae::Matrix4::Translation( ae::Vec3( 3.0f, 3.0f, 0.0f ) ) );
+		level.AddMesh( &cubeModel, ae::Matrix4::Translation( ae::Vec3( 3.0f, 3.0f, 0.0f ) ) * ae::Matrix4::Scaling( ae::Vec3( 3.0f ) ) );
 	}
 	
 	// Ship

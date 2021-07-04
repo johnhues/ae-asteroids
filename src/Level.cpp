@@ -135,7 +135,7 @@ void Level::Render( Game* game )
 	{
 		ae::Matrix4 normalMatrix = levelMesh.localToWorld.GetNormalMatrix();
 		ae::UniformList uniformList;
-		uniformList.Set( "u_modelToNdc", levelMesh.localToWorld * game->worldToNdc );
+		uniformList.Set( "u_modelToNdc", game->worldToNdc * levelMesh.localToWorld );
 		uniformList.Set( "u_normalMatrix", normalMatrix );
 		uniformList.Set( "u_ambientLight", game->ambientLight.GetLinearRGB() );
 		uniformList.Set( "u_color", ae::Color::Gray().GetLinearRGB() );

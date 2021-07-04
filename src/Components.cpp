@@ -45,10 +45,10 @@ void Physics::Update( Game* game, Transform& transform )
 	yaw += rotationVel * dt;
 	rotationVel = ae::DtLerp( rotationVel, rotationDrag, dt, 0.0f );
 
-	transform.transform = ae::Matrix4::Scaling( scale );
-//	transform.transform *= ae::Matrix4::RotationY( roll );
+	transform.transform = ae::Matrix4::Translation( pos );
 	transform.transform *= ae::Matrix4::RotationZ( yaw );
-	transform.transform *= ae::Matrix4::Translation( pos );
+	//transform.transform *= ae::Matrix4::RotationY( roll );
+	transform.transform *= ae::Matrix4::Scaling( scale );
 }
 
 
@@ -131,8 +131,8 @@ void Camera::Update( Game* game, Transform& transform )
 //	camPos.y = ae::Max( camPos.y, -4.0f );
 	
 	transform.SetPosition( camPos );
-	game->worldToNdc = ae::Matrix4::WorldToView( camPos, ae::Vec3( 0, 0, -1 ), ae::Vec3( 0, 1, 0 ) );
-	game->worldToNdc *= ae::Matrix4::ViewToProjection( 0.9f, game->render.GetAspectRatio(), 1.0f, 100.0f );
+	game->worldToNdc = ae::Matrix4::ViewToProjection( 0.9f, game->render.GetAspectRatio(), 1.0f, 100.0f );
+	game->worldToNdc *= ae::Matrix4::WorldToView( camPos, ae::Vec3( 0, 0, -1 ), ae::Vec3( 0, 1, 0 ) );
 }
 
 void Asteroid::Update( Game* game, Transform& transform, Physics& physics )
@@ -214,7 +214,7 @@ void Model::Draw( Game* game, const Transform& transform ) const
 {
 	ae::Matrix4 normalMatrix = transform.transform.GetNormalMatrix();
 	ae::UniformList uniformList;
-	uniformList.Set( "u_modelToNdc", transform.transform * game->worldToNdc );
+	uniformList.Set( "u_modelToNdc", game->worldToNdc * transform.transform );
 	uniformList.Set( "u_normalMatrix", normalMatrix );
 	uniformList.Set( "u_ambientLight", game->ambientLight.GetLinearRGB() );
 	uniformList.Set( "u_color", color.GetLinearRGB() );
